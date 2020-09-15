@@ -1,0 +1,7 @@
+*.out
+*.log
+*.bak
+*.xel
+local/
+.vscode/
+.DS_Store
