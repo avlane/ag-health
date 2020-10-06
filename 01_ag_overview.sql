@@ -13,6 +13,9 @@ SELECT  ag.name AS ag_name,
         ars.connected_state_desc,
         ars.operational_state_desc,
         ars.synchronization_health_desc,
+        ars.last_connect_error_number,
+        ars.last_connect_error_description,
+        ars.last_connect_error_timestamp,
         ars.is_local
 FROM sys.availability_groups AS ag
 JOIN sys.availability_replicas AS ar
