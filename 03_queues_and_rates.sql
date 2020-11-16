@@ -14,7 +14,10 @@ SELECT  ag.name AS ag_name,
         CONVERT(decimal(18, 1), drs.log_send_queue_size / 1024.0) AS log_send_queue_mb,
         drs.log_send_rate AS log_send_rate_kb_per_sec,
         CONVERT(decimal(18, 1), drs.redo_queue_size / 1024.0) AS redo_queue_mb,
-        drs.redo_rate AS redo_rate_kb_per_sec
+        drs.redo_rate AS redo_rate_kb_per_sec,
+        -- seconds to drain each queue at the current rate (NULL when the rate is 0 or unknown)
+        drs.log_send_queue_size / NULLIF(drs.log_send_rate, 0) AS send_queue_drain_seconds,
+        drs.redo_queue_size / NULLIF(drs.redo_rate, 0) AS redo_queue_drain_seconds
 FROM sys.dm_hadr_database_replica_states AS drs
 JOIN sys.availability_replicas AS ar
   ON ar.replica_id = drs.replica_id
