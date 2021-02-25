@@ -1,8 +1,10 @@
 /*
     05_failover_readiness.sql
     Run on: the primary replica.
-    Is each secondary ready to take over? A replica is ready when it is connected
-    and every database on it is SYNCHRONIZED and not suspended.
+    Is each secondary ready to take over? A synchronous-commit replica is ready
+    when it is connected and every database on it is SYNCHRONIZED and not
+    suspended. An asynchronous-commit replica is never safe for a planned
+    failover: it can only be failed over with possible data loss.
 */
 SET NOCOUNT ON;
 
@@ -23,10 +25,16 @@ SELECT  ag.name AS ag_name,
         pr.db_count,
         pr.synchronized_dbs,
         pr.suspended_dbs,
-        CASE WHEN ars.connected_state = 1
-              AND pr.synchronized_dbs = pr.db_count
-              AND pr.suspended_dbs = 0
-             THEN N'READY' ELSE N'NOT READY' END AS failover_readiness
+        CASE WHEN ars.connected_state = 0 OR pr.suspended_dbs > 0
+             THEN N'NOT READY'
+             WHEN ar.availability_mode = 0
+             THEN N'FORCED ONLY: asynchronous commit, data loss possible'
+             WHEN pr.synchronized_dbs < pr.db_count
+             THEN N'NOT READY'
+             WHEN ar.failover_mode = 0
+             THEN N'READY: automatic failover, no data loss'
+             ELSE N'READY: manual failover, no data loss'
+        END AS failover_readiness
 FROM sys.availability_groups AS ag
 JOIN sys.availability_replicas AS ar ON ar.group_id = ag.group_id
 JOIN sys.dm_hadr_availability_replica_states AS ars ON ars.replica_id = ar.replica_id
