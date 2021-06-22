@@ -23,3 +23,18 @@ JOIN sys.availability_groups AS ag ON ag.group_id = s.ag_id
 JOIN sys.availability_replicas AS ar ON ar.replica_id = s.ag_remote_replica_id
 LEFT JOIN sys.availability_databases_cluster AS adc ON adc.group_database_id = s.ag_db_id
 ORDER BY s.start_time DESC;
+
+
+-- Seeds that are running right now. Times are UTC; sizes and rates are shown in MB.
+SELECT  p.local_database_name,
+        p.role_desc,
+        p.remote_machine_name,
+        CONVERT(decimal(18, 1), p.transferred_size_bytes / 1048576.0) AS transferred_mb,
+        CONVERT(decimal(18, 1), p.database_size_bytes / 1048576.0) AS database_mb,
+        CONVERT(decimal(5, 1), 100.0 * p.transferred_size_bytes / NULLIF(p.database_size_bytes, 0)) AS pct_done,
+        CONVERT(decimal(18, 1), p.transfer_rate_bytes_per_second / 1048576.0) AS rate_mb_per_sec,
+        p.is_compression_enabled,
+        p.start_time_utc,
+        p.estimate_time_complete_utc
+FROM sys.dm_hadr_physical_seeding_stats AS p
+ORDER BY p.start_time_utc DESC;
