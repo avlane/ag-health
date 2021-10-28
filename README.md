@@ -12,7 +12,11 @@ reports its own local rows in the `sys.dm_hadr_*` DMVs).
 | `02_database_sync_state.sql` | synchronization state of every database on every replica |
 | `03_queues_and_rates.sql` | log send and redo queues (MB) with rates and drain time |
 | `04_rpo_rto.sql` | estimated data loss and recovery time per secondary database |
+| `05_failover_readiness.sql` | which secondaries could take over, with or without data loss |
 | `06_listener_connectivity.sql` | listener names, ports and IP address state |
+| `07_cluster_quorum.sql` | WSFC quorum state and member votes |
+| `08_seeding_progress.sql` | automatic seeding history and running seeds |
+| `09_log_shipping_lag.sql` | log shipping backup, copy and restore lag |
 
 ## Units
 
@@ -33,4 +37,13 @@ ag_name   secondary_replica availability_mode_desc synchronization_state_desc es
 --------- ----------------- ---------------------- -------------------------- --------------------- --------------------
 AG_Sales  SQLDR02           ASYNCHRONOUS_COMMIT    SYNCHRONIZING              12                    4
 AG_Sales  SQLPROD02         SYNCHRONOUS_COMMIT     SYNCHRONIZED               0                     0
+```
+
+`05_failover_readiness.sql`
+
+```
+ag_name   replica_server_name availability_mode_desc failover_mode_desc connected_state_desc db_count synchronized_dbs suspended_dbs failover_readiness
+--------- ------------------- ---------------------- ------------------ -------------------- -------- ---------------- ------------- ------------------------------------------------
+AG_Sales  SQLPROD02           SYNCHRONOUS_COMMIT     AUTOMATIC          CONNECTED            12       12               0             READY: automatic failover, no data loss
+AG_Sales  SQLDR02             ASYNCHRONOUS_COMMIT    MANUAL             CONNECTED            12       11               0             FORCED ONLY: asynchronous commit, data loss possible
 ```
