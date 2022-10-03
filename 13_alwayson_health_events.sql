@@ -6,8 +6,12 @@
 */
 SET NOCOUNT ON;
 
+-- The session files live in the instance log directory. Derive it from the error log
+-- path so the script works for named instances, other versions and Linux.
+DECLARE @errorlog nvarchar(260) = CONVERT(nvarchar(260), SERVERPROPERTY(N'ErrorLogFileName'));
+DECLARE @sep nchar(1) = CASE WHEN @errorlog LIKE N'%/%' THEN N'/' ELSE N'\' END;
 DECLARE @path nvarchar(300) =
-    N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Log\AlwaysOn_health*.xel';
+    LEFT(@errorlog, LEN(@errorlog) - CHARINDEX(@sep, REVERSE(@errorlog)) + 1) + N'AlwaysOn_health*.xel';
 
 ;WITH ev AS (
     SELECT  x.object_name,
@@ -27,4 +31,7 @@ SELECT  ev.timestamp_utc,
         ev.d.value('(event/data[@name="error_number"]/value)[1]', 'int') AS error_number,
         ev.d.value('(event/data[@name="message"]/value)[1]', 'nvarchar(max)') AS message
 FROM ev
+WHERE ev.object_name <> N'error_reported'
+   OR ev.d.value('(event/data[@name="error_number"]/value)[1]', 'int')
+      IN (1480, 35201, 35202, 35206, 35264, 35265, 41142, 41144)
 ORDER BY ev.timestamp_utc DESC;
