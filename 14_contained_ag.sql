@@ -17,3 +17,15 @@ LEFT JOIN sys.dm_hadr_availability_replica_states AS ars
        ON ars.group_id = ag.group_id AND ars.is_local = 1
 WHERE ag.is_contained = 1
 ORDER BY ag.name;
+
+
+-- The system databases of each contained AG and their state on this replica.
+SELECT  ag.name AS ag_name,
+        d.name AS contained_system_database,
+        d.state_desc,
+        d.recovery_model_desc
+FROM sys.availability_groups AS ag
+JOIN sys.databases AS d
+  ON d.name IN (ag.name + N'_master', ag.name + N'_msdb')
+WHERE ag.is_contained = 1
+ORDER BY ag.name, d.name;
