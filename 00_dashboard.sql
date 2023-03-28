@@ -33,7 +33,8 @@ LEFT JOIN sys.dm_hadr_database_replica_states AS drs
        ON drs.replica_id = ar.replica_id AND drs.group_id = ar.group_id
 GROUP BY ag.name, <<contained>>, ar.replica_server_name, ars.role_desc, ar.availability_mode_desc,
          ar.failover_mode_desc, ars.connected_state_desc, ars.synchronization_health_desc
-ORDER BY ag.name, ars.role_desc, ar.replica_server_name;';
+ORDER BY CASE WHEN ars.synchronization_health_desc = N''HEALTHY'' THEN 1 ELSE 0 END,
+         ag.name, ars.role_desc, ar.replica_server_name;';
 
 SET @sql = REPLACE(@sql, N'<<contained>>', @contained);
 EXEC sys.sp_executesql @sql;
