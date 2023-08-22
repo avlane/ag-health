@@ -47,3 +47,15 @@ ag_name   replica_server_name availability_mode_desc failover_mode_desc connecte
 AG_Sales  SQLPROD02           SYNCHRONOUS_COMMIT     AUTOMATIC          CONNECTED            12       12               0             READY: automatic failover, no data loss
 AG_Sales  SQLDR02             ASYNCHRONOUS_COMMIT    MANUAL             CONNECTED            12       11               0             FORCED ONLY: asynchronous commit, data loss possible
 ```
+
+## SQL Server versions
+
+| feature | first version |
+|---|---|
+| `sys.dm_hadr_*` database and replica state, listeners | 2012 |
+| `is_primary_replica` in `dm_hadr_database_replica_states` | 2014 |
+| automatic seeding DMVs, `secondary_lag_seconds`, distributed AGs | 2016 |
+| `cluster_type_desc`, configuration-only replicas | 2017 |
+| contained AGs (`is_contained`) | 2022 |
+
+The dashboard adapts to older versions. `14_contained_ag.sql` needs 2022.
