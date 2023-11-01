@@ -16,6 +16,8 @@ SELECT  ag.name AS ag_name,
         drs.database_state_desc,
         drs.is_suspended,
         drs.suspend_reason_desc,
+        drs.last_sent_time,
+        drs.last_received_time,
         drs.last_hardened_time,
         drs.last_redone_time,
         drs.last_commit_time
