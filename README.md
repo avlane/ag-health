@@ -8,6 +8,7 @@ reports its own local rows in the `sys.dm_hadr_*` DMVs).
 
 | script | what it does |
 |---|---|
+| `00_dashboard.sql` | one row per replica with health, suspended databases and worst queues |
 | `01_ag_overview.sql` | groups, replicas, roles, connection and synchronization health |
 | `02_database_sync_state.sql` | synchronization state of every database on every replica |
 | `03_queues_and_rates.sql` | log send and redo queues (MB) with rates and drain time |
@@ -17,6 +18,12 @@ reports its own local rows in the `sys.dm_hadr_*` DMVs).
 | `07_cluster_quorum.sql` | WSFC quorum state and member votes |
 | `08_seeding_progress.sql` | automatic seeding history and running seeds |
 | `09_log_shipping_lag.sql` | log shipping backup, copy and restore lag |
+| `10_distributed_ag.sql` | distributed availability group members and database state |
+| `11_read_only_routing.sql` | read-only routing lists |
+| `12_backup_preference.sql` | backup preference, priorities and preferred replica |
+| `13_alwayson_health_events.sql` | role changes, lease expirations and AG errors from `AlwaysOn_health` |
+| `14_contained_ag.sql` | contained AGs and their system databases (2022 and later) |
+| `15_commit_latency_counters.sql` | flow control, send rates and average synchronous commit delay |
 
 ## Units
 
