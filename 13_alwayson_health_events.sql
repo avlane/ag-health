@@ -6,6 +6,8 @@
 */
 SET NOCOUNT ON;
 
+DECLARE @HoursBack int = 72;
+
 -- The session files live in the instance log directory. Derive it from the error log
 -- path so the script works for named instances, other versions and Linux.
 DECLARE @errorlog nvarchar(260) = CONVERT(nvarchar(260), SERVERPROPERTY(N'ErrorLogFileName'));
@@ -18,7 +20,8 @@ DECLARE @path nvarchar(300) =
             x.timestamp_utc,
             CONVERT(xml, x.event_data) AS d
     FROM sys.fn_xe_file_target_read_file(@path, NULL, NULL, NULL) AS x
-    WHERE x.object_name IN (N'availability_replica_state_change',
+    WHERE x.timestamp_utc >= DATEADD(HOUR, -@HoursBack, SYSUTCDATETIME())
+      AND x.object_name IN (N'availability_replica_state_change',
                             N'availability_group_lease_expired',
                             N'error_reported')
 )
