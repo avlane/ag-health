@@ -6,6 +6,7 @@
 SET NOCOUNT ON;
 
 SELECT  ag.name AS ag_name,
+        ag.cluster_type_desc,
         ar.replica_server_name,
         ars.role_desc,
         ar.availability_mode_desc,

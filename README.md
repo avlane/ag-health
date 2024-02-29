@@ -65,4 +65,6 @@ AG_Sales  SQLDR02             ASYNCHRONOUS_COMMIT    MANUAL             CONNECTE
 | `cluster_type_desc`, configuration-only replicas | 2017 |
 | contained AGs (`is_contained`) | 2022 |
 
-The dashboard adapts to older versions. `14_contained_ag.sql` needs 2022.
+The scripts need SQL Server 2017 or later (`cluster_type_desc` and
+`required_synchronized_secondaries_to_commit`). The dashboard adapts to the
+contained AG column that only 2022 has. `14_contained_ag.sql` needs 2022.
