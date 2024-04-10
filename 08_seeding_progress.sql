@@ -6,12 +6,15 @@
 */
 SET NOCOUNT ON;
 
+DECLARE @DaysBack int = 30;       -- the DMV keeps history until the instance restarts
+
 SELECT  ag.name AS ag_name,
         adc.database_name,
         ar.replica_server_name AS remote_replica,
         ar.seeding_mode_desc,
         s.start_time,
         s.completion_time,
+        DATEDIFF(MINUTE, s.start_time, ISNULL(s.completion_time, SYSDATETIMEOFFSET())) AS minutes_elapsed,
         s.is_source,
         s.current_state,
         s.performed_seeding,
@@ -22,6 +25,7 @@ FROM sys.dm_hadr_automatic_seeding AS s
 JOIN sys.availability_groups AS ag ON ag.group_id = s.ag_id
 JOIN sys.availability_replicas AS ar ON ar.replica_id = s.ag_remote_replica_id
 LEFT JOIN sys.availability_databases_cluster AS adc ON adc.group_database_id = s.ag_db_id
+WHERE s.start_time >= DATEADD(DAY, -@DaysBack, SYSDATETIMEOFFSET())
 ORDER BY s.start_time DESC;
 
 
