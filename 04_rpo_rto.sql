@@ -6,10 +6,13 @@
                               last_commit_time (what a failover right now could lose)
       est_recovery_seconds  : redo_queue_size (KB) / redo_rate (KB/s), the time
                               the secondary needs to finish redo before it is online
+    est_rto_seconds adds @OverheadSeconds to est_recovery_seconds.
     These are estimates: with no workload both commit times stop moving and the
     difference only shows the gap, not a growing loss.
 */
 SET NOCOUNT ON;
+
+DECLARE @OverheadSeconds int = 30;   -- failure detection, cluster and startup time from your own failover tests
 
 SELECT  ag.name AS ag_name,
         ar.replica_server_name AS secondary_replica,
@@ -17,7 +20,8 @@ SELECT  ag.name AS ag_name,
         ar.availability_mode_desc,
         s.synchronization_state_desc,
         DATEDIFF(SECOND, s.last_commit_time, p.last_commit_time) AS est_data_loss_seconds,
-        s.redo_queue_size / NULLIF(s.redo_rate, 0) AS est_recovery_seconds
+        s.redo_queue_size / NULLIF(s.redo_rate, 0) AS est_recovery_seconds,
+        s.redo_queue_size / NULLIF(s.redo_rate, 0) + @OverheadSeconds AS est_rto_seconds
 FROM sys.dm_hadr_database_replica_states AS p
 JOIN sys.dm_hadr_database_replica_states AS s
   ON s.group_id = p.group_id
