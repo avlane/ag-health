@@ -14,7 +14,7 @@ DECLARE @contained nvarchar(40) =
 
 DECLARE @sql nvarchar(max) = N'
 SELECT  ag.name AS ag_name,
-        <<contained>> AS is_contained,
+        CONVERT(bit, MAX(CONVERT(int, <<contained>>))) AS is_contained,
         ar.replica_server_name,
         ars.role_desc,
         ar.availability_mode_desc,
@@ -31,7 +31,7 @@ JOIN sys.availability_replicas AS ar ON ar.group_id = ag.group_id
 LEFT JOIN sys.dm_hadr_availability_replica_states AS ars ON ars.replica_id = ar.replica_id
 LEFT JOIN sys.dm_hadr_database_replica_states AS drs
        ON drs.replica_id = ar.replica_id AND drs.group_id = ar.group_id
-GROUP BY ag.name, <<contained>>, ar.replica_server_name, ars.role_desc, ar.availability_mode_desc,
+GROUP BY ag.name, ar.replica_server_name, ars.role_desc, ar.availability_mode_desc,
          ar.failover_mode_desc, ars.connected_state_desc, ars.synchronization_health_desc
 ORDER BY CASE WHEN ars.synchronization_health_desc = N''HEALTHY'' THEN 1 ELSE 0 END,
          ag.name, ars.role_desc, ar.replica_server_name;';
