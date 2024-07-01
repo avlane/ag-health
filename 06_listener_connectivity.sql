@@ -13,7 +13,9 @@ SELECT  ag.name AS ag_name,
         lip.ip_address,
         lip.ip_subnet_mask,
         lip.network_subnet_ip,
-        lip.state_desc
+        lip.state_desc,
+        CASE WHEN lip.state_desc = N'ONLINE' THEN N''
+             ELSE N'CHECK: listener IP address is not online' END AS check_result
 FROM sys.availability_group_listeners AS l
 JOIN sys.availability_groups AS ag ON ag.group_id = l.group_id
 JOIN sys.availability_group_listener_ip_addresses AS lip ON lip.listener_id = l.listener_id
