@@ -7,6 +7,7 @@
 SET NOCOUNT ON;
 
 DECLARE @HoursBack int = 72;
+DECLARE @AgName sysname = NULL;     -- NULL = all availability groups
 
 -- The session files live in the instance log directory. Derive it from the error log
 -- path so the script works for named instances, other versions and Linux.
@@ -34,7 +35,10 @@ SELECT  ev.timestamp_utc,
         ev.d.value('(event/data[@name="error_number"]/value)[1]', 'int') AS error_number,
         ev.d.value('(event/data[@name="message"]/value)[1]', 'nvarchar(max)') AS message
 FROM ev
-WHERE ev.object_name <> N'error_reported'
-   OR ev.d.value('(event/data[@name="error_number"]/value)[1]', 'int')
-      IN (1480, 35201, 35202, 35206, 35264, 35265, 41142, 41144)
+WHERE (ev.object_name <> N'error_reported'
+       OR ev.d.value('(event/data[@name="error_number"]/value)[1]', 'int')
+          IN (1480, 35201, 35202, 35206, 35264, 35265, 41142, 41144))
+  AND (@AgName IS NULL
+       OR ev.object_name = N'error_reported'
+       OR ev.d.value('(event/data[@name="availability_group_name"]/value)[1]', 'nvarchar(256)') = @AgName)
 ORDER BY ev.timestamp_utc DESC;
