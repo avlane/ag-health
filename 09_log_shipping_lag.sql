@@ -11,6 +11,7 @@ SELECT  p.primary_server,
         p.last_backup_date_utc,
         DATEDIFF(MINUTE, p.last_backup_date_utc, SYSUTCDATETIME()) AS minutes_since_backup,
         p.backup_threshold AS backup_threshold_minutes,
+        p.threshold_alert_enabled AS alert_enabled,
         CASE WHEN DATEDIFF(MINUTE, p.last_backup_date_utc, SYSUTCDATETIME()) > p.backup_threshold
              THEN N'BEHIND' ELSE N'OK' END AS backup_status
 FROM msdb.dbo.log_shipping_monitor_primary AS p
@@ -28,6 +29,7 @@ SELECT  s.secondary_server,
         DATEDIFF(MINUTE, s.last_restored_date_utc, SYSUTCDATETIME()) AS minutes_since_restore,
         s.last_restored_latency AS restore_latency_minutes,
         s.restore_threshold AS restore_threshold_minutes,
+        s.threshold_alert_enabled AS alert_enabled,
         CASE WHEN DATEDIFF(MINUTE, s.last_restored_date_utc, SYSUTCDATETIME()) > s.restore_threshold
              THEN N'BEHIND' ELSE N'OK' END AS restore_status
 FROM msdb.dbo.log_shipping_monitor_secondary AS s
