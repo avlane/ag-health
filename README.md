@@ -24,6 +24,7 @@ reports its own local rows in the `sys.dm_hadr_*` DMVs).
 | `13_alwayson_health_events.sql` | role changes, lease expirations and AG errors from `AlwaysOn_health` |
 | `14_contained_ag.sql` | contained AGs and their system databases (2022 and later) |
 | `15_commit_latency_counters.sql` | flow control, send rates and average synchronous commit delay |
+| `16_dashboard_json.sql` | the per-replica summary as one JSON document |
 
 ## Units
 
@@ -68,3 +69,13 @@ AG_Sales  SQLDR02             ASYNCHRONOUS_COMMIT    MANUAL             CONNECTE
 The scripts need SQL Server 2017 or later (`cluster_type_desc` and
 `required_synchronized_secondaries_to_commit`). The dashboard adapts to the
 contained AG column that only 2022 has. `14_contained_ag.sql` needs 2022.
+
+`00_dashboard.sql`
+
+```
+ag_name  is_contained replica_server_name role_desc connected_state_desc synchronization_health_desc db_count synchronized_dbs suspended_dbs max_log_send_queue_mb max_redo_queue_mb
+-------- ------------ ------------------- --------- -------------------- --------------------------- -------- ---------------- ------------- --------------------- -----------------
+AG_Sales 0            SQLPROD01           PRIMARY   CONNECTED            HEALTHY                     12       12               0             NULL                  NULL
+AG_Sales 0            SQLPROD02           SECONDARY CONNECTED            HEALTHY                     12       12               0             0.0                   0.2
+AG_Sales 0            SQLDR02             SECONDARY CONNECTED            PARTIALLY_HEALTHY           12       11               0             48.7                  3.9
+```
