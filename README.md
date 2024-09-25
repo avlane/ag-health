@@ -79,3 +79,11 @@ AG_Sales 0            SQLPROD01           PRIMARY   CONNECTED            HEALTHY
 AG_Sales 0            SQLPROD02           SECONDARY CONNECTED            HEALTHY                     12       12               0             0.0                   0.2
 AG_Sales 0            SQLDR02             SECONDARY CONNECTED            PARTIALLY_HEALTHY           12       11               0             48.7                  3.9
 ```
+
+## Permissions
+
+* `VIEW SERVER STATE` for the `sys.dm_hadr_*` DMVs, performance counters and the
+  `AlwaysOn_health` files (on SQL Server 2022 `VIEW SERVER PERFORMANCE STATE` is
+  the narrower permission for the DMVs)
+* `VIEW ANY DEFINITION` to read the availability group catalog views
+* `db_datareader` in `msdb` for the log shipping monitor tables
