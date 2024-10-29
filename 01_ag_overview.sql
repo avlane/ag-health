@@ -27,3 +27,15 @@ LEFT JOIN sys.dm_hadr_availability_replica_states AS ars
   ON ars.replica_id = ar.replica_id
  AND ars.group_id = ar.group_id
 ORDER BY ag.name, ars.role, ar.replica_server_name;
+
+-- Failover behaviour settings of each group.
+--   failure_condition_level : 1 (server down only) to 5 (any qualified failure condition)
+--   health_check_timeout    : milliseconds the cluster waits for sp_server_diagnostics
+--   db_failover             : database level health detection (1 = on)
+SELECT  ag.name AS ag_name,
+        ag.failure_condition_level,
+        ag.health_check_timeout AS health_check_timeout_ms,
+        ag.db_failover AS database_level_health_detection,
+        ag.automated_backup_preference_desc
+FROM sys.availability_groups AS ag
+ORDER BY ag.name;
