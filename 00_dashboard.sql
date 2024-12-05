@@ -38,3 +38,7 @@ ORDER BY CASE WHEN ars.synchronization_health_desc = N''HEALTHY'' THEN 1 ELSE 0 
 
 SET @sql = REPLACE(@sql, N'<<contained>>', @contained);
 EXEC sys.sp_executesql @sql;
+
+-- Seeds that are running right now (see 08_seeding_progress.sql for details).
+SELECT COUNT(*) AS physical_seeds_running
+FROM sys.dm_hadr_physical_seeding_stats;
