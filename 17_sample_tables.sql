@@ -26,5 +26,10 @@ BEGIN
         est_data_loss_seconds     int NULL,
         est_recovery_seconds      int NULL
     );
+
+    -- Purge and trend queries filter on time first.
+    CREATE NONCLUSTERED INDEX IX_ag_health_samples_time
+        ON dbo.ag_health_samples (sample_time_utc)
+        INCLUDE (ag_name, replica_server_name, database_name);
 END
 GO
