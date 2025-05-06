@@ -33,3 +33,19 @@ BEGIN
         INCLUDE (ag_name, replica_server_name, database_name);
 END
 GO
+
+IF OBJECT_ID(N'dbo.log_shipping_samples', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.log_shipping_samples (
+        sample_id         bigint IDENTITY(1, 1) NOT NULL
+            CONSTRAINT PK_log_shipping_samples PRIMARY KEY CLUSTERED,
+        sample_time_utc   datetime2(0) NOT NULL
+            CONSTRAINT DF_log_shipping_samples_time DEFAULT (SYSUTCDATETIME()),
+        side              char(1) NOT NULL,        -- P = backup side, S = restore side
+        server_name       sysname NOT NULL,
+        database_name     sysname NOT NULL,
+        minutes_behind    int NULL,
+        threshold_minutes int NULL
+    );
+END
+GO
