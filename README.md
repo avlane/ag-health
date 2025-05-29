@@ -25,6 +25,12 @@ reports its own local rows in the `sys.dm_hadr_*` DMVs).
 | `14_contained_ag.sql` | contained AGs and their system databases (2022 and later) |
 | `15_commit_latency_counters.sql` | flow control, send rates and average synchronous commit delay |
 | `16_dashboard_json.sql` | the per-replica summary as one JSON document |
+| `17_sample_tables.sql` | tables for collected AG and log shipping samples (utility database) |
+| `18_collect_samples.sql` | procedure that records one sample per secondary database |
+| `19_purge_samples.sql` | batched purge of old samples |
+| `20_trend_report.sql` | hourly worst queue and estimate values from the samples |
+| `21_alert_check.sql` | threshold table and breaches in the last 10 minutes |
+| `22_create_collection_job.sql` | Agent job that runs the collector every minute |
 
 ## Units
 
