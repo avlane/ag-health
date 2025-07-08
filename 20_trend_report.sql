@@ -21,3 +21,17 @@ FROM dbo.ag_health_samples AS s
 WHERE s.sample_time_utc >= DATEADD(HOUR, -@HoursBack, SYSUTCDATETIME())
 GROUP BY DATEADD(HOUR, DATEDIFF(HOUR, 0, s.sample_time_utc), 0), s.ag_name, s.replica_server_name
 ORDER BY hour_utc, s.ag_name, s.replica_server_name;
+
+-- Narrow layout (one row per hour and metric) for charting tools.
+SELECT  DATEADD(HOUR, DATEDIFF(HOUR, 0, s.sample_time_utc), 0) AS hour_utc,
+        s.ag_name,
+        v.metric,
+        MAX(v.metric_value) AS max_value
+FROM dbo.ag_health_samples AS s
+CROSS APPLY (VALUES ('est_data_loss_seconds', CONVERT(bigint, s.est_data_loss_seconds)),
+                    ('est_recovery_seconds', CONVERT(bigint, s.est_recovery_seconds)),
+                    ('log_send_queue_kb', s.log_send_queue_kb),
+                    ('redo_queue_kb', s.redo_queue_kb)) AS v(metric, metric_value)
+WHERE s.sample_time_utc >= DATEADD(HOUR, -@HoursBack, SYSUTCDATETIME())
+GROUP BY DATEADD(HOUR, DATEDIFF(HOUR, 0, s.sample_time_utc), 0), s.ag_name, v.metric
+ORDER BY hour_utc, s.ag_name, v.metric;
