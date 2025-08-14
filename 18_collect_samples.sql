@@ -40,11 +40,11 @@ BEGIN
     -- Log shipping lag, when this instance is a log shipping monitor.
     INSERT INTO dbo.log_shipping_samples (side, server_name, database_name, minutes_behind, threshold_minutes)
     SELECT 'P', lp.primary_server, lp.primary_database,
-           DATEDIFF(MINUTE, lp.last_backup_date, GETDATE()), lp.backup_threshold
+           DATEDIFF(MINUTE, lp.last_backup_date_utc, SYSUTCDATETIME()), lp.backup_threshold
     FROM msdb.dbo.log_shipping_monitor_primary AS lp
     UNION ALL
     SELECT 'S', ls.secondary_server, ls.secondary_database,
-           DATEDIFF(MINUTE, ls.last_restored_date, GETDATE()), ls.restore_threshold
+           DATEDIFF(MINUTE, ls.last_restored_date_utc, SYSUTCDATETIME()), ls.restore_threshold
     FROM msdb.dbo.log_shipping_monitor_secondary AS ls;
 END
 GO
