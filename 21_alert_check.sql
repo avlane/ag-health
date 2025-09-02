@@ -17,8 +17,8 @@ BEGIN
     );
 
     INSERT INTO dbo.ag_health_thresholds (metric, warn_value, crit_value, unit)
-    VALUES ('est_data_loss_seconds', 30, 300, 'seconds'),
-           ('est_recovery_seconds', 120, 600, 'seconds'),
+    VALUES ('est_data_loss_seconds', 60, 300, 'seconds'),
+           ('est_recovery_seconds', 180, 600, 'seconds'),
            ('log_send_queue_kb', 512000, 2097152, 'KB'),
            ('redo_queue_kb', 512000, 2097152, 'KB');
 END
