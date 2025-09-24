@@ -93,3 +93,17 @@ AG_Sales 0            SQLDR02             SECONDARY CONNECTED            PARTIAL
   the narrower permission for the DMVs)
 * `VIEW ANY DEFINITION` to read the availability group catalog views
 * `db_datareader` in `msdb` for the log shipping monitor tables
+
+## Collecting samples
+
+The DMVs only show the current state. To keep history, run the scripts in this order
+in a utility database (`DbaUtil` in the scripts, change it to suit):
+
+1. `17_sample_tables.sql` once
+2. `18_collect_samples.sql` once, to create the procedure
+3. `22_create_collection_job.sql` to run it every minute
+4. `19_purge_samples.sql` daily (30 days by default)
+
+`21_alert_check.sql` creates `dbo.ag_health_thresholds` on first run. Edit the rows to
+change a limit; `warn_value` and `crit_value` use the unit in the `unit` column
+(KB for queues, seconds for the estimates).
