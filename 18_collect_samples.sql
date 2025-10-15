@@ -12,6 +12,11 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Nothing to record unless this replica is the primary of at least one AG database.
+    IF NOT EXISTS (SELECT 1 FROM sys.dm_hadr_database_replica_states
+                   WHERE is_local = 1 AND is_primary_replica = 1)
+        RETURN;
+
     INSERT INTO dbo.ag_health_samples
            (ag_name, replica_server_name, database_name, synchronization_state_desc, is_suspended,
             log_send_queue_kb, log_send_rate_kb_per_sec, redo_queue_kb, redo_rate_kb_per_sec,
