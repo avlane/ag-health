@@ -107,3 +107,9 @@ in a utility database (`DbaUtil` in the scripts, change it to suit):
 `21_alert_check.sql` creates `dbo.ag_health_thresholds` on first run. Edit the rows to
 change a limit; `warn_value` and `crit_value` use the unit in the `unit` column
 (KB for queues, seconds for the estimates).
+
+## SQL Server 2025
+
+SQL Server 2025 reached general availability in November 2025. The scripts use only
+DMVs and catalog views that exist since SQL Server 2017 (2022 for the contained AG
+column).
